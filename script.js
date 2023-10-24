@@ -14,6 +14,12 @@ let opNum1 = '0', opNum2 = null, operator = null;
 // Keep track of whether or not a decimal sign have been used
 let decimalMode = false;
 
+// Set all buttons to be not selectable by TAB key
+const buttons = document.querySelectorAll('button');
+buttons.forEach(button => {
+    button.setAttribute('tabindex', '-1');
+});
+
 calculatorFrame.addEventListener('click', event => {
     const target = event.target;
 
@@ -32,6 +38,7 @@ calculatorFrame.addEventListener('click', event => {
         // It may sometimes have real text in it e.g. when doing division by 0
         if (isNaN(newInput.textContent)) {
             newInput.textContent = '0';
+            decimalMode = false;
             return;
         }
 
