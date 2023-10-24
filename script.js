@@ -13,6 +13,7 @@ let opNum1 = '0', opNum2 = null, operator = null;
 
 // Keep track of whether or not a decimal sign have been used
 let decimalMode = false;
+let foundNewAnswer = false;
 
 // Set all buttons to be not selectable by TAB key
 const buttons = document.querySelectorAll('button');
@@ -62,12 +63,14 @@ calculatorFrame.addEventListener('click', event => {
     } else if (target.id === 'decimalPoint') {
         if (decimalMode === false) {
             if (operator === null) {
-                newInput.textContent = String(opNum1) + '.';
+                opNum1 += '.'
+                newInput.textContent = opNum1;
             } else {
                 if (opNum2 === null) {
-                    opNum2 = 0;
+                    opNum2 = '';
                 }
-                newInput.textContent = String(opNum2) + '.';
+                opNum2 += '.'
+                newInput.textContent = opNum2;
             }
 
             decimalMode = true;
@@ -80,11 +83,13 @@ calculatorFrame.addEventListener('click', event => {
         }
 
         const result = executeOperation(opNum1, operator, opNum2);
-        previousInput.textContent = `${opNum1} ${operator} ${opNum2} =`;
+        console.log(opNum1, operator, opNum2, '=', result);
+        updateUpperDisplay(opNum1, operator, opNum2);
         newInput.textContent = result;
+        foundNewAnswer = true;
         resetVariables();
 
-        opNum1 = isNaN(result) ? 0 : result;
+        opNum1 = String(result);
         if (!Number.isInteger(result)) {
             decimalMode = true;
         }
@@ -92,6 +97,13 @@ calculatorFrame.addEventListener('click', event => {
     // Numbers
     } else if (target.classList.contains('number') && digits.includes(target.value)) {
         const digit = target.value;
+
+        // User has clicked a number after he found an answer, which means he is inputting a new number, without using previous answer
+        if (foundNewAnswer === true) {
+            opNum1 = '0';
+            decimalMode = false;
+            foundNewAnswer = false;
+        }
 
         if (decimalMode === false) {
             // Clearly, user is currently inputting into the first operand
@@ -110,7 +122,6 @@ calculatorFrame.addEventListener('click', event => {
 
         } else {
             if (operator === null) {
-                // if the digit is 0, we need to store opNum1 as a string
                 opNum1 = addDecimal(opNum1, digit);
             } else {
                 opNum2 = addDecimal(opNum2, digit);
@@ -124,15 +135,16 @@ calculatorFrame.addEventListener('click', event => {
         if (opNum1 === null) {
             return;
         }
+        foundNewAnswer = false;
         const previousOperator = operator;
         operator = target.value;
 
-        if (previousOperator !== null && opNum2 !== null && opNum2 != 0) {
+        if (previousOperator !== null && opNum2 !== null) {
             const result = executeOperation(opNum1, previousOperator, opNum2);
             opNum1 = isNaN(result) ? '0' : String(result);
         }
 
-        previousInput.textContent = `${opNum1} ${operator}`;
+        updateUpperDisplay(opNum1, operator);
 
         // If the user has clicked on the operator, he has finished typing his input for number
         decimalMode = false;
@@ -165,6 +177,23 @@ document.body.addEventListener('keyup', event => {
     }
 });
 
+function updateUpperDisplay(num1, operator, num2 = null) {
+    switch(operator) {
+        case '*':
+            operator = 'x';
+            break;
+        case '/':
+            operator = '÷';
+            break;
+        default:
+            break;
+    }
+    previousInput.textContent = `${convertTo3DecimalPlaces(Number(num1))} ${operator} `;
+    if (num2) {
+        previousInput.textContent += convertTo3DecimalPlaces(Number(num2)) + ' =';
+    }
+}
+
 // Adds digits after decimal point
 function addDecimal(number, digit) {
     number = String(number);
@@ -176,7 +205,7 @@ function addDecimal(number, digit) {
 }
 
 function resetVariables() {
-    opNum1 = 0;
+    opNum1 = '0';
     operator = null;
     opNum2 = null;
     decimalMode = false;
@@ -184,7 +213,7 @@ function resetVariables() {
 
 // Check for numbers and operator
 function executeOperation(num1, operator, num2) {
-    if (num1 == null || num2 == null || operator == null || isNaN(num1) || isNaN(num2) || !operators.includes(operator)) {
+    if (isNaN(num1) || isNaN(num2) || !operators.includes(operator)) {
         return 0;
     }
 

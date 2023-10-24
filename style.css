@@ -32,10 +32,6 @@ body * {
     border: none;
 }
 
-.calculator-frame * {
-    tab
-}
-
 .result-display, .btn {
     border-radius: 8px;
 }
