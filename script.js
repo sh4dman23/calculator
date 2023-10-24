@@ -51,8 +51,10 @@ calculatorFrame.addEventListener('click', event => {
 
     // Decimals
     } else if (target.id === 'decimalPoint') {
-        newInput.textContent = decimalMode === false ? newInput.textContent + '.' : newInput.textContent;
-        decimalMode = true;
+        if (decimalMode === false) {
+            newInput.textContent = operator === null ? String(opNum1) + '.' : String(opNum2) + '.';
+            decimalMode = true;
+        }
 
     // Equal
     } else if (target.id === 'equal') {
@@ -82,8 +84,10 @@ calculatorFrame.addEventListener('click', event => {
                 // Both the first operand and the operator is set
                 opNum2 = opNum2 === null ? digit : opNum2 * 10 + digit;
             }
+
         } else {
             if (operator === null) {
+                // if the digit is 0, we need to store opNum1 as a string
                 opNum1 = addDecimal(opNum1, digit);
             } else {
                 opNum2 = addDecimal(opNum2, digit);
@@ -91,6 +95,8 @@ calculatorFrame.addEventListener('click', event => {
         }
 
         newInput.textContent = operator === null ? opNum1 : opNum2;
+
+    // Operators
     } else if (target.classList.contains('operator') && operators.includes(target.value)) {
         if (opNum1 === null) {
             return;
@@ -113,12 +119,11 @@ calculatorFrame.addEventListener('click', event => {
 
 // Adds digits after decimal point
 function addDecimal(number, digit) {
-    digit = Number(digit);
-    if (Number.isInteger(number)) {
-        number += digit / 10;
-    } else {
-        number = Number(String(number) + digit);
+    number = String(number);
+    if (!number.includes('.')) {
+        number += '.';
     }
+    number += digit;
     return number;
 }
 
@@ -135,7 +140,7 @@ function executeOperation(num1, operator, num2) {
         return NaN;
     }
 
-    [num1, num2] = [Number(num1), Number(num2)];
+    [num1, num2] = [convertTo3DecimalPlaces(Number(num1)), convertTo3DecimalPlaces(Number(num2))];
 
     switch(operator) {
         case '+':
