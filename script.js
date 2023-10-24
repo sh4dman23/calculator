@@ -29,22 +29,22 @@ calculatorFrame.addEventListener('click', event => {
 
         // It may sometimes have real text in it e.g. when doing division by 0
         if (isNaN(newInput.textContent)) {
-            newInput.textContent = 0;
+            newInput.textContent = '0';
             return;
         }
 
         if (operator === null) {
-            if (String(opNum1).length > 0) {
-                opNum1 = Number(String(opNum1).slice(0, String(opNum1).length - 1));
+            if (String(opNum1).length > 1) {
+                opNum1 = String(opNum1).slice(0, String(opNum1).length - 1);
             } else {
-                opNum1 = 0;
+                opNum1 = '0';
             }
             newInput.textContent = opNum1;
         } else {
-            if (String(opNum2).length > 0) {
-                opNum2 = Number(String(opNum2).slice(0, String(opNum2).length - 1));
+            if (String(opNum2).length > 1) {
+                opNum2 = String(opNum2).slice(0, String(opNum2).length - 1);
             } else {
-                opNum2 = 0;
+                opNum2 = '0';
             }
             newInput.textContent = opNum2;
         }
@@ -82,15 +82,21 @@ calculatorFrame.addEventListener('click', event => {
 
     // Numbers
     } else if (target.classList.contains('number') && digits.includes(target.value)) {
-        const digit = Number(target.value);
+        const digit = target.value;
 
         if (decimalMode === false) {
             // Clearly, user is currently inputting into the first operand
             if (operator === null) {
-                opNum1 = opNum1 === null ? digit : opNum1 * 10 + digit;
+                if (opNum1 == 0) {
+                    opNum1 = '';
+                }
+                opNum1 = opNum1 === null ? digit : String(opNum1) + digit;
             } else {
+                if (opNum2 == 0) {
+                    opNum2 = '';
+                }
                 // Both the first operand and the operator is set
-                opNum2 = opNum2 === null ? digit : opNum2 * 10 + digit;
+                opNum2 = opNum2 === null ? digit : String(opNum2) + digit;
             }
 
         } else {
@@ -112,9 +118,9 @@ calculatorFrame.addEventListener('click', event => {
         const previousOperator = operator;
         operator = target.value;
 
-        if (previousOperator !== null && opNum2 !== null && opNum2 !== 0) {
+        if (previousOperator !== null && opNum2 !== null && opNum2 != 0) {
             const result = executeOperation(opNum1, previousOperator, opNum2);
-            opNum1 = isNaN(result) ? 0 : result;
+            opNum1 = isNaN(result) ? '0' : String(result);
         }
 
         previousInput.textContent = `${opNum1} ${operator}`;

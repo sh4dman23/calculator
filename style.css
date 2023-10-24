@@ -103,11 +103,12 @@ body {
 .smaller-display {
     flex: 1;
     font-size: 24px;
+    flex-wrap: wrap-reverse;
 }
 
 .larger-display {
     flex: 2;
-    font-size: 36px;
+    font-size: 40px;
     flex-wrap: wrap-reverse;
 }
 
