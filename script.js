@@ -64,7 +64,11 @@ calculatorFrame.addEventListener('click', event => {
         previousInput.textContent = `${opNum1} ${operator} ${opNum2} =`;
         newInput.textContent = result;
         resetVariables();
+
         opNum1 = isNaN(result) ? 0 : result;
+        if (!Number.isInteger(result)) {
+            decimalMode = true;
+        }
 
     // Numbers
     } else if (target.classList.contains('number') && digits.includes(target.value)) {
@@ -91,8 +95,19 @@ calculatorFrame.addEventListener('click', event => {
         if (opNum1 === null) {
             return;
         }
+        const previousOperator = operator;
         operator = target.value;
+
+        if (previousOperator !== null && opNum2 !== null) {
+            const result = executeOperation(opNum1, previousOperator, opNum2);
+            opNum1 = isNaN(result) ? 0 : result;
+        }
+
         previousInput.textContent = `${opNum1} ${operator}`;
+
+        // If the user has clicked on the operator, he has finished typing his input for number
+        decimalMode = false;
+        opNum2 = 0;
     }
 });
 
