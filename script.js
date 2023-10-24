@@ -5,9 +5,11 @@ const calculatorFrame = document.querySelector('.calculator-frame');
 const previousInput = document.querySelector('#previousInput');
 const newInput = document.querySelector('#newInput');
 
-// This calculator will do one operation at a time and each operation consists of an operator and 2 numbers
-// Initialize opNum1 to 0 and rest of them to 'nothing'
-let opNum1 = 0, opNum2 = null, operator = null;
+/*  This calculator will do one operation at a time and each operation consists of an operator and 2 numbers
+    Initialize opNum1 to 0 and rest of them to 'nothing'
+    Also, opNum1 and opNum2 are stored as strings so that the calculator can work with longer inputs
+*/
+let opNum1 = '0', opNum2 = null, operator = null;
 
 // Keep track of whether or not a decimal sign have been used
 let decimalMode = false;
@@ -23,7 +25,7 @@ calculatorFrame.addEventListener('click', event => {
 
     // Delete
     } else if (target.id === 'delete') {
-        if (newInput.textContent.charAt(newInput.length - 1) === '.' && decimalMode === true) {
+        if (newInput.textContent.charAt(newInput.textContent.length - 1) === '.') {
             decimalMode = false;
         }
 
@@ -179,7 +181,17 @@ function executeOperation(num1, operator, num2) {
         return 0;
     }
 
-    [num1, num2] = [convertTo3DecimalPlaces(Number(num1)), convertTo3DecimalPlaces(Number(num2))];
+    // Adjust the values
+    if (num1.toString().split('.').length > 1 && num1.toString().split('.')[1].length > 3) {
+        num1 = convertTo3DecimalPlaces(Number(num1));
+    } else {
+        num1 = Number(num1);
+    }
+    if (num2.toString().split('.').length > 1 && num2.toString().split('.')[1].length > 3) {
+        num2 = convertTo3DecimalPlaces(Number(num1));
+    } else {
+        num2 = Number(num2);
+    }
 
     switch(operator) {
         case '+':
@@ -222,5 +234,5 @@ function divide(num1, num2) {
 }
 
 function convertTo3DecimalPlaces(num) {
-    return Math.floor(num * 1000) / 1000;
+    return Math.round(num * 1000) / 1000;
 }
