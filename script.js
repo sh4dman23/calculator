@@ -52,7 +52,15 @@ calculatorFrame.addEventListener('click', event => {
     // Decimals
     } else if (target.id === 'decimalPoint') {
         if (decimalMode === false) {
-            newInput.textContent = operator === null ? String(opNum1) + '.' : String(opNum2) + '.';
+            if (operator === null) {
+                newInput.textContent = String(opNum1) + '.';
+            } else {
+                if (opNum2 === null) {
+                    opNum2 = 0;
+                }
+                newInput.textContent = String(opNum2) + '.';
+            }
+
             decimalMode = true;
         }
 
@@ -104,7 +112,7 @@ calculatorFrame.addEventListener('click', event => {
         const previousOperator = operator;
         operator = target.value;
 
-        if (previousOperator !== null && opNum2 !== null) {
+        if (previousOperator !== null && opNum2 !== null && opNum2 !== 0) {
             const result = executeOperation(opNum1, previousOperator, opNum2);
             opNum1 = isNaN(result) ? 0 : result;
         }
@@ -113,7 +121,32 @@ calculatorFrame.addEventListener('click', event => {
 
         // If the user has clicked on the operator, he has finished typing his input for number
         decimalMode = false;
-        opNum2 = 0;
+        opNum2 = null;
+    }
+});
+
+// Keyboard Support
+document.body.addEventListener('keyup', event => {
+    event.preventDefault();
+    const key = event.key;
+    let button = null;
+
+    if (digits.includes(key)) {
+        button = calculatorFrame.querySelector(`.number[value="${key}"]`);
+    } else if (operators.includes(key)) {
+        button = calculatorFrame.querySelector(`.operator[value="${key}"]`);
+    } else if (key === '=' || event.key === 'Enter') {
+        button = calculatorFrame.querySelector('#equal');
+    } else if (key === '.') {
+        button = calculatorFrame.querySelector('#decimalPoint');
+    } else if (key === 'Escape') {
+        button = calculatorFrame.querySelector('#clear');
+    } else if (key === 'Backspace' || key === 'Delete') {
+        button = calculatorFrame.querySelector('#delete');
+    }
+
+    if (button) {
+        button.click();
     }
 });
 
@@ -136,8 +169,8 @@ function resetVariables() {
 
 // Check for numbers and operator
 function executeOperation(num1, operator, num2) {
-    if (isNaN(num1) || isNaN(num2) || !operators.includes(operator)) {
-        return NaN;
+    if (num1 == null || num2 == null || operator == null || isNaN(num1) || isNaN(num2) || !operators.includes(operator)) {
+        return 0;
     }
 
     [num1, num2] = [convertTo3DecimalPlaces(Number(num1)), convertTo3DecimalPlaces(Number(num2))];
