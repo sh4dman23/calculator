@@ -216,6 +216,8 @@ function executeOperation(num1, operator, num2) {
         return 0;
     }
 
+    [num1, num2] = [convertTo3DecimalPlaces(num1), convertTo3DecimalPlaces(num2)];
+
     switch(operator) {
         case '+':
             return add(num1, num2);
