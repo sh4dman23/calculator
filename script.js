@@ -63,13 +63,13 @@ calculatorFrame.addEventListener('click', event => {
     } else if (target.id === 'decimalPoint') {
         if (decimalMode === false) {
             if (operator === null) {
-                opNum1 += '.'
+                opNum1 += '.';
                 newInput.textContent = opNum1;
             } else {
                 if (opNum2 === null) {
                     opNum2 = '';
                 }
-                opNum2 += '.'
+                opNum2 += '.';
                 newInput.textContent = opNum2;
             }
 
@@ -83,7 +83,6 @@ calculatorFrame.addEventListener('click', event => {
         }
 
         const result = executeOperation(opNum1, operator, opNum2);
-        console.log(opNum1, operator, opNum2, '=', result);
         updateUpperDisplay(opNum1, operator, opNum2);
         newInput.textContent = result;
         foundNewAnswer = true;
@@ -188,9 +187,9 @@ function updateUpperDisplay(num1, operator, num2 = null) {
         default:
             break;
     }
-    previousInput.textContent = `${convertTo3DecimalPlaces(Number(num1))} ${operator} `;
+    previousInput.textContent = `${convertTo3DecimalPlaces(Number(num1))} ${operator}`;
     if (num2) {
-        previousInput.textContent += convertTo3DecimalPlaces(Number(num2)) + ' =';
+        previousInput.textContent += ` ${convertTo3DecimalPlaces(Number(num2))} =`;
     }
 }
 
@@ -215,18 +214,6 @@ function resetVariables() {
 function executeOperation(num1, operator, num2) {
     if (isNaN(num1) || isNaN(num2) || !operators.includes(operator)) {
         return 0;
-    }
-
-    // Adjust the values
-    if (num1.toString().split('.').length > 1 && num1.toString().split('.')[1].length > 3) {
-        num1 = convertTo3DecimalPlaces(Number(num1));
-    } else {
-        num1 = Number(num1);
-    }
-    if (num2.toString().split('.').length > 1 && num2.toString().split('.')[1].length > 3) {
-        num2 = convertTo3DecimalPlaces(Number(num1));
-    } else {
-        num2 = Number(num2);
     }
 
     switch(operator) {
@@ -261,7 +248,7 @@ function multiply(num1, num2) {
 
 function divide(num1, num2) {
     // Handle division by 0
-    if (num2 === 0) {
+    if (num2 == 0) {
         return 'lmao no';
     }
 
