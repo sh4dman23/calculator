@@ -61,6 +61,8 @@ calculatorFrame.addEventListener('click', event => {
 
     // Decimals
     } else if (target.id === 'decimalPoint') {
+        falsifyPreviousAnswer();
+
         if (decimalMode === false) {
             if (operator === null) {
                 opNum1 += '.';
@@ -97,12 +99,7 @@ calculatorFrame.addEventListener('click', event => {
     } else if (target.classList.contains('number') && digits.includes(target.value)) {
         const digit = target.value;
 
-        // User has clicked a number after he found an answer, which means he is inputting a new number, without using previous answer
-        if (foundNewAnswer === true) {
-            opNum1 = '0';
-            decimalMode = false;
-            foundNewAnswer = false;
-        }
+        falsifyPreviousAnswer();
 
         if (decimalMode === false) {
             // Clearly, user is currently inputting into the first operand
@@ -190,6 +187,15 @@ function updateUpperDisplay(num1, operator, num2 = null) {
     previousInput.textContent = `${convertTo3DecimalPlaces(Number(num1))} ${operator}`;
     if (num2) {
         previousInput.textContent += ` ${convertTo3DecimalPlaces(Number(num2))} =`;
+    }
+}
+
+function falsifyPreviousAnswer() {
+    // User has clicked a number or decimal after he found an answer, which means he is inputting a new number, without using previous answer
+    if (foundNewAnswer === true) {
+        opNum1 = '0';
+        decimalMode = false;
+        foundNewAnswer = false;
     }
 }
 
